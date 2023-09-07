@@ -1,9 +1,11 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html >
+<html lang="en" data-bs-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.5.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" ></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
     <style>
         .gallery-container {
@@ -20,6 +22,7 @@
             height: auto;
         }
         .thumbnails {
+            
             display: flex;
             justify-content: center;
             align-items: center;
@@ -27,7 +30,6 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background-color: rgba(255, 255, 255, 0.8);
         }
         .thumbnails-inner {
             display: flex;
@@ -36,17 +38,18 @@
             max-width: 100%;
         }
         .thumbnail {
+
             flex: 1 0 80px;
             margin: 0 10px;
             cursor: pointer;
         }
         .thumbnail img {
             width: 100%;
-            height: auto;
-            border: 2px solid transparent;
+            height: 100px;
         }
         .thumbnail.active img {
-            border: 2px solid #007bff;
+            scale: 1.05;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.687);
         }
         #myModal {
             display: none;
@@ -60,7 +63,9 @@
             overflow: auto;
             background-color: rgba(0, 0, 0, 0.7);
         }
+
         .modal-content {
+            width: auto;
             margin: auto;
             display: block;
             max-width: 90%;
@@ -74,16 +79,24 @@
             cursor: pointer;
             font-size: 24px;
         }
+        .open-gallery-button {
+            display: block;
+            margin: auto;
+            padding: 10px 20px;
+            cursor: pointer;
+        }
         .prev, .next {
             position: absolute;
             top: 50%;
-            font-size: 24px;
+
             cursor: pointer;
             z-index: 1;
-            color: white;
-            background-color: rgba(0, 0, 0, 0.2);
-            padding: 10px;
+            margin: 10px;
             border-radius: 50%;
+        }
+        .prev:hover, .next:hover {
+            scale: 0.98;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.687);
         }
         .prev {
             left: 10px;
@@ -91,32 +104,51 @@
         .next {
             right: 10px;
         }
-        .open-gallery-button {
-            display: block;
-            margin: auto;
-            padding: 10px 20px;
-            background-color: #007bff;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
+        .info{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+        }
+        .mid{
+            width: auto;
+        }
+        .mid .form-control{
+            flex-grow: 0.2;
+        }
+        @media (max-width: 800px) {
+            .prev, .next {
+                display: none;
+            }
         }
     </style>
     <title>Vanilla JavaScript Gallery with Thumbnails</title>
 </head>
-<body>
-    <div id="app">
-        <button class="open-gallery-button" @click="openModal(currentIndex)"><i class="fas fa-images"></i> Открыть галерею</button>
+<body class="bg-dark">
+    <div id="app" >
+        <button class="btn btn-warning open-gallery-button" @click="openModal(currentIndex)"> <i class="bi bi-images me-3 p-0"></i>Открыть галерею</button>
 
         <div id="myModal" class="modal">
+            <div class="info text-light">
+                <div class="mid mt-1">
+                        <div class="input-group d-flex justify-content-center input-group-sm">
+                        <input  type="text" class="form-control " :value="currentIndex + 1" :aria-label="currentIndex + 1" aria-describedby="basic-addon2">
+                        <span class="input-group-text" id="basic-addon2">/ {{  this.images.length }}</span>
+                      </div>
+                </div>
+
+            </div>
             <span class="close" @click="closeModal"><i class="fas fa-times-circle"></i></span>
             <img class="modal-content" id="modalImage" :src="modalImageUrl" v-if="modalImageUrl">
-            <span class="prev" @click="prevImage"><i class="fas fa-chevron-left"></i></span>
-            <span class="next" @click="nextImage"><i class="fas fa-chevron-right"></i></span>
-            <div class="thumbnails">
+            <span class="prev btn" @click="prevImage"><i class="bi bi-caret-left-square-fill fa-2x text-light"></i></span>
+            <span class="next btn" @click="nextImage"><i class="bi bi-caret-right-square-fill fa-2x text-light"></i></span>
+            <div class="thumbnails mb-1">
                 <div class="thumbnails-inner">
                     <div class="thumbnail" v-for="(image, index) in Thumbs" :key="index" @click="openModal(index)" :class="{ 'active': index === currentIndex }">
-                        <img :src="image.src" :alt="image.alt" :data-index="index">
+                        <img :src="image.src" width="50" height="100" :alt="image.alt" :data-index="index">
                     </div>
                 </div>
             </div>
@@ -127,9 +159,14 @@
     <script>
         document.addEventListener("DOMContentLoaded", function () {
             const images = [
-                "image1.jpg",
-                "image2.jpg",
-                "image3.jpg"
+            "page1.jpg",
+            "page2.jpg",
+            "Без названия.png"
+            ];
+            const thumbs = [
+            "page1.jpg",
+            "page2.jpg",
+            "Без названия.png"
             ];
 
             const imageDir = "";
@@ -141,7 +178,7 @@
                         src: imageDir + image,
                         alt: `Image ${index + 1}`
                     })),
-                    Thumbs: images.map((image, index) => ({
+                    Thumbs: thumbs.map((image, index) => ({
                         src: imageDir + image,
                         alt: `Image ${index + 1}`
                     })),
