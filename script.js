@@ -4,14 +4,11 @@ const images = [
     "page1.jpg",
     "page2.jpg",
     "page2.jpg",
-    "demo.jpg",
 ];
 const thumbs = [
     "demo.jpg",
     "demo.jpg",
     "demo.jpg",
-    "demo.jpg",
-    "demo.jpg"
 ];
 
 const app = new Vue({
@@ -70,7 +67,9 @@ const app = new Vue({
         },
         openModal(index) {
             if (this.Thumbs.length > this.images.length){
-                this.Thumbs.pop();
+                for (let i = 0; i < this.Thumbs.length - this.images.length; i++) {
+                    this.Thumbs.pop();
+                  }
             }
             this.currentIndex = index;
             this.modalImageUrl = this.images[index].src;
@@ -84,8 +83,12 @@ const app = new Vue({
         prevImage() {
             this.currentIndex = (this.currentIndex - 1 + this.images.length) % this.images.length;
             this.modalImageUrl = null;
+            console.log(this.currentPage + 1);
             if (this.currentIndex + 1 <= this.thumbnailsPerPage * (this.currentPage + 1) ){
                 this.prevThumbnails();
+            }
+            if (this.currentIndex + 1 > this.thumbnailsPerPage * (this.currentPage + 1)){
+                this.nextThumbnails();
             }
             setTimeout(() => {
                 this.modalImageUrl = this.images[this.currentIndex].src;
@@ -95,7 +98,9 @@ const app = new Vue({
         nextImage() {
             this.currentIndex = (this.currentIndex + 1) % this.images.length;
             this.modalImageUrl = null;
-            
+            if (this.currentIndex + 1 <= this.thumbnailsPerPage * (this.currentPage + 1) ){
+                this.prevThumbnails();
+            }
             if (this.currentIndex + 1 > this.thumbnailsPerPage * (this.currentPage + 1)){
                 this.nextThumbnails();
             }

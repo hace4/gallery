@@ -1,77 +1,84 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-    <link rel="stylesheet" href="style.css">
-    <title>Vanilla JavaScript Gallery with Thumbnails</title>
-</head>
-<body>
-    <div id="app">
-        <button class="btn btn-warning open-gallery-button" @click="openModal(currentIndex)">
-            <i class="bi bi-images me-3 p-0"></i>Открыть галерею
-        </button>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css">
+        <link rel="stylesheet"
+            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="style.css">
+        <title>Vanilla JavaScript Gallery with Thumbnails</title>
+    </head>
+    <body>
+        <div id="app">
+            <button class="btn btn-warning open-gallery-button"
+                @click="openModal(currentIndex)">
+                <i class="bi bi-images me-3 p-0"></i>Открыть галерею
+            </button>
 
-        <div id="myModal" class="modal">
-            <div class="info">
-                <div class="left ml-2 mt-2">
-                    <button class="btn text-warning toggle-thumbnails-button" @click="toggleThumbnails" alt="скрыть миниатюры">
-                        <i class="bi bi-grid-3x3-gap-fill"></i>
-                    </button>
-                </div>
-
-                <div class="mid mt-1">
-                    <div class="input-group d-flex justify-content-center input-group-sm">
-                        <input align="right" id="page" name="page" required minlength="1" maxlength="10000" size="10" type="int" class="form-control" :value="currentIndex + 1">
-                        <span class="input-group-text">
-                            / {{ images.length }}
-                        </span>
+            <div id="myModal" class="modal">
+                <div class="info d-flex justify-content-center align-items-centre position-fixed top-0" style="left: 0; right: 0;">
+                    <div class="left d-flex justify-content-start align-items-start position-fixed top-0 " style="left: 0;  margin-left: 0.5rem!important">
+                        <button
+                            class="btn text-warning toggle-thumbnails-button"
+                            @click="toggleThumbnails" alt="скрыть миниатюры">
+                            <i class="bi bi-grid-3x3-gap-fill" ></i>
+                        </button>
+                    </div>
+                    <div class="right d-flex justify-content-end align-items-end position-fixed top-0 " style="right: 0; margin-right: 0.5rem!important">
+                        <button class="btn text-warning close"
+                        @click="closeModal">
+                        <i class="bi bi-x-square"></i>
+                        </button>
+                    </div>
+                    <div class="mid w-auto mt-1">
+                        <div class="d-flex " >
+                           {{ currentIndex + 1 }} / {{ images.length }}
+                        </div>
                     </div>
                 </div>
-            </div>
 
-            <span class="close" @click="closeModal">
-                <i class="bi bi-x fa-2x"></i>
-            </span>
 
-            <transition name="slide-fade" mode="out-in">
-                <img class="modal-content" id="modalImage" :src="modalImageUrl" v-if="modalImageUrl" @dblclick="toggleZoom" key="modalImageKey" loading="lazy" data-src="">
-            </transition>
 
-            <span class="prev btn" @click="prevImage">
-                <i class="bi bi-caret-left-fill fa-2x"></i>
-            </span>
+                <transition name="slide-fade" mode="out-in">
+                    <img class="modal-content mw-100 mh-100 w-auto m-auto display-block mw-90 mh-90 img-fluid" id="modalImage"
+                        role="button"
+                        style="transition: transform 0.3s ease-in-out;"
+                        :src="modalImageUrl" v-if="modalImageUrl"
+                        @dblclick="toggleZoom" key="modalImageKey"
+                        loading="lazy" data-src="">
+                </transition>
 
-            <span class="next btn" @click="nextImage">
-                <i class="bi bi-caret-right-fill fa-2x"></i>
-            </span>
+                <span class="prev z-1 position-absolute top-50 " style="margin-left: 0.5rem!important;  left: 10px;" role="button" @click="prevImage">
+                    <i class="bi bi-caret-left-fill fa-2x" ></i>
+                </span>
 
-            <div class="thumbnails" :class="{ 'hide-thumbnails': !showThumbnails }">
-                <div class="thumbnails-inner">
-                    <div
-                        class="thumbnail"
-                        v-for="(image, index) in visibleThumbnails"
-                        :key="image.index"
-                        @click="openModal(image.index)"
-                        :class="{ 'active': image.index === currentIndex }"
-                    >
-                        <button><img :src="image.src" :alt="image.alt" :data-index="image.index"></button>
+                <span class="next z-1 position-absolute top-50 " style="margin-right: 0.5rem!important; right: 10px;" role="button" @click="nextImage">
+                    <i class="bi bi-caret-right-fill fa-2x" ></i>
+                </span>
+
+                <div class="thumbnails fixed-bottom mb-2 d-flex justify-content-center align-items-end   "
+                    :class="{ 'd-none': !showThumbnails }">
+                    <div class="thumbnails-inner d-flex justify-content-center align-items-center mw-100 ">
+                        <div
+                            class="thumbnail"
+                            role="button"
+                            v-for="(image, index) in visibleThumbnails"
+                            :key="image.index"
+                            @click="openModal(image.index)"
+                            :class="{ 'active': image.index === currentIndex }">
+                            <button><img :src="image.src" :alt="image.alt"
+                                    :data-index="image.index" class="img-fluid"></button>
+                        </div>
                     </div>
                 </div>
-            </div>
-            
-                <div class="thumbnail-controls">
-                    <button @click="prevThumbnails">Предыдущая страница</button>
-                    <button @click="nextThumbnails">Следующая страница</button>
-                </div>
-            
-            
-    </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="script.js"></script>
-</body>
-</html>
+            </div>
+
+            <script src="https://cdn.jsdelivr.net/npm/vue@2.6.14"></script>
+            <script
+                src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+            <script src="script.js"></script>
+        </body>
+    </html>
