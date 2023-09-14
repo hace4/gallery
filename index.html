@@ -1,105 +1,103 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="bootstrap-5.3.1/css/bootstrap.min.css">
-        <link rel="stylesheet"
-            href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-        <link rel="stylesheet" href="style.css">
-        <title>Vanilla JavaScript Gallery with Thumbnails</title>
-    </head>
-    <body>
-        <div id="app">
-            <!-- Кнопка для открытия галереи -->
-            <button class="btn btn-warning open-gallery-button"
-                @click="openModal(currentIndex)">
-                <i class="bi bi-images me-3 p-0"></i>Открыть галерею
-            </button>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="bootstrap-5.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style.css">
+    <title>Vanilla JavaScript Gallery with Thumbnails</title>
+</head>
+<body>
+    <div id="app">
+        <!-- Кнопка для открытия галереи -->
+        <button class="btn btn-warning open-gallery-button"
+            @click="openModal(currentIndex)">
+            <i class="bi bi-images me-3 p-0"></i>Открыть галерею
+        </button>
 
-            <!-- Модальное окно с изображением и миниатюрами -->
-            <div id="myModal"
-                class="modal d-none position-fixed z-1 pt-5 w-100 h-100 overflow-auto overflow-x-hidden bg-dark start-0 top-0"
-                style="--bs-bg-opacity: 1;">
-                <div id="info"
-                    class="info d-flex justify-content-center align-items-centre position-fixed top-0 start-0 end-0"
-                    :class="{ 'd-none': !showInfo }">
-                    <div
-                        class="left d-flex justify-content-start align-items-start position-fixed top-0 start-0 ml-2">
-                        <button
-                            class="btn text-warning toggle-thumbnails-button"
-                            @click="toggleThumbnails" alt="скрыть миниатюры">
-                            <i class="bi bi-grid-3x3-gap-fill"
-                                style="font-size: 1.5rem;"></i>
-                        </button>
-                    </div>
-                    <div
-                        class="right d-flex justify-content-end align-items-end position-fixed top-0 end-0 ml-2">
-                        <button class="btn text-warning close"
-                            @click="closeModal">
-                            <i class="bi bi-x-square" style="font-size: 1.7rem;"></i>
-                        </button>
-                    </div>
-                    <div class="mid w-auto mt-1">
-                        <div class="d-flex ">
-                            <p class="text-light">{{ currentIndex + 1 }} / {{
-                                images.length }}</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Изображение в модальном окне -->
-                <div class="zoom-container">
-                    <img
-                        class="modal-content w-auto m-auto display-block mw-90 mh-90 img-fluid"
-                        id="modalImage" role="button"
-                        
-                        :src="modalImageUrl" v-if="modalImageUrl"
-                        @dblclick="toggleZoom" key="modalImageKey"
-                        loading="lazy" data-src>
-                </div>
-                
-                <!-- Кнопки для переключения изображений -->
-
-                <div id="navigation" class="navigation"
-                    :class="{ 'd-none': !showNavigation }">
-                    <span class="prev z-1 position-absolute top-50 text-light"
-                        style="left: 10px;"
-                        role="button" @click="prevImage">
-                        <i class="bi bi-caret-left-fill"
-                            style="font-size: 1.5rem;"></i>
-                    </span>
-                    <span class="next z-1 position-absolute top-50 text-light"
-                        style="right: 10px;"
-                        role="button" @click="nextImage">
-                        <i class="bi bi-caret-right-fill"
-                            style="font-size: 1.5rem;"></i>
-                    </span>
-                </div>
-
-                <!-- Миниатюры -->
+        <!-- Модальное окно с изображением и миниатюрами -->
+        <div id="myModal"
+            class="modal d-none position-fixed z-1 pt-5 w-100 h-100 overflow-auto overflow-x-hidden bg-dark start-0 top-0"
+            style="--bs-bg-opacity: 1;">
+            <div id="info"
+                class="info d-flex justify-content-center align-items-center position-fixed top-0 start-0 end-0"
+                :class="{ 'd-none': !showInfo }">
                 <div
-                    class="thumbnails fixed-bottom  d-flex justify-content-center align-items-end"
-                    :class="{ 'd-none': !showThumbnails }">
-                    <div
-                        class="thumbnails-inner d-flex justify-content-center align-items-end mw-100">
-                        <div class="thumbnail"
-                            role="button"
-                            v-for="(image, index) in visibleThumbnails"
-                            :key="image.index"
-                            @click="openModal(image.index)"
-                            :class="{ 'active': image.index === currentIndex }">
-                            <button><img :src="image.src" :alt="image.alt"
-                                    :data-index="image.index" class="img-fluid"></button>
-                        </div>
+                    class="left d-flex justify-content-start align-items-start position-fixed top-0 start-0 ml-2">
+                    <button
+                        class="btn text-warning toggle-thumbnails-button"
+                        @click="toggleThumbnails" alt="скрыть миниатюры">
+                        <i class="bi bi-grid-3x3-gap-fill"
+                            style="font-size: 1.5rem;"></i>
+                    </button>
+                </div>
+                <div
+                    class="right d-flex justify-content-end align-items-end position-fixed top-0 end-0 ml-2">
+                    <button class="btn text-warning close"
+                        @click="closeModal">
+                        <i class="bi bi-x-square" style="font-size: 1.7rem;"></i>
+                    </button>
+                </div>
+                <div class="mid w-auto mt-1">
+                    <div class="d-flex ">
+                        <p class="text-light">{{ currentIndex + 1 }} / {{
+                            images.length }}</p>
                     </div>
                 </div>
             </div>
 
-            <script src="vue.min.js"></script>
-            <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js"></script>
+            <!-- Изображение в модальном окне -->
+            <div class="zoom-container">
+                <img
+                    class="modal-content w-auto m-auto display-block mw-90 mh-90 img-fluid"
+                    id="modalImage" role="button"
+                    :src="modalImageUrl" v-if="modalImageUrl"
+                    @dblclick="toggleZoom" key="modalImageKey"
+                    loading="lazy" data-src>
+            </div>
 
-            <script src="bootstrap-5.3.1/js/bootstrap.bundle.min.js"></script>
-            <script src="script.js"></script>
-        </body>
-    </html>
+            <!-- Кнопки для переключения изображений -->
+            <div id="navigation" class="navigation"
+                :class="{ 'd-none': !showNavigation }">
+                <span class="prev z-1 position-absolute top-50 text-light"
+                    style="left: 10px;"
+                    role="button" @click="prevImage">
+                    <i class="bi bi-caret-left-fill"
+                        style="font-size: 1.5rem;"></i>
+                </span>
+                <span class="next z-1 position-absolute top-50 text-light"
+                    style="right: 10px;"
+                    role="button" @click="nextImage">
+                    <i class="bi bi-caret-right-fill"
+                        style="font-size: 1.5rem;"></i>
+                </span>
+            </div>
+
+            <!-- Миниатюры -->
+            <div class="thumbnails fixed-bottom  d-flex justify-content-center align-items-end"
+                :class="{ 'd-none': !showThumbnails }">
+                <div
+                    class="thumbnails-inner d-flex justify-content-center align-items-end mw-100">
+                    <div class="thumbnail"
+                        role="button"
+                        v-for="(image, index) in visibleThumbnails"
+                        :key="image.index"
+                        @click="openModal(image.index)"
+                        :class="{ 'active': image.index === currentIndex }">
+                        <button><img :src="image.src" :alt="image.alt"
+                                :data-index="image.index" class="img-fluid"></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <script src="vue.min.js"></script>
+        <script src="bootstrap-5.3.1/js/bootstrap.bundle.min.js"></script>
+
+        <script src="js/script.js"></script>
+
+        
+    </body>
+</html>
+
