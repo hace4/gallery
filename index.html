@@ -19,10 +19,11 @@
         <!-- Модальное окно с изображением и миниатюрами -->
         <div id="myModal"
             class="modal d-none position-fixed z-1 pt-5 w-100 h-100 overflow-auto overflow-x-hidden bg-dark start-0 top-0"
-            style="--bs-bg-opacity: 1;">
+            style="--bs-bg-opacity: 1;"
+            ref="modal">
             <div id="info"
                 class="info d-flex justify-content-center align-items-center position-fixed top-0 start-0 end-0"
-                :class="{ 'd-none': !showInfo }">
+                v-show="showInfo">
                 <div
                     class="left d-flex justify-content-start align-items-start position-fixed top-0 start-0 ml-2">
                     <button
@@ -52,9 +53,12 @@
                 <img
                     class="modal-content w-auto m-auto display-block mw-90 mh-90 img-fluid"
                     id="modalImage" role="button"
-                    :src="modalImageUrl" v-if="modalImageUrl"
-                    @dblclick="toggleZoom" key="modalImageKey"
-                    loading="lazy" data-src>
+                    :src="modalImageUrl"
+                    v-if="modalImageUrl"
+                    @dblclick="toggleZoom"
+                    key="modalImageKey"
+                    loading="lazy"
+                    data-src>
             </div>
 
             <!-- Кнопки для переключения изображений -->
@@ -86,7 +90,7 @@
                         @click="openModal(image.index)"
                         :class="{ 'active': image.index === currentIndex }">
                         <button><img :src="image.src" :alt="image.alt"
-                                :data-index="image.index" class="img-fluid"></button>
+                                :data-index="image.index" class="img-fluid" loading="lazy" data-src></button>
                     </div>
                 </div>
             </div>
@@ -94,10 +98,7 @@
 
         <script src="vue.min.js"></script>
         <script src="bootstrap-5.3.1/js/bootstrap.bundle.min.js"></script>
-
         <script src="js/script.js"></script>
-
-        
-    </body>
+    </div>
+</body>
 </html>
-

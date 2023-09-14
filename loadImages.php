@@ -1,6 +1,6 @@
 <?php
 // Укажите путь к директории с изображениями
-$imageDir = 'images/';
+$imageDir = 'images\\';
 
 // Получите список файлов в директории
 $files = scandir($imageDir);
@@ -10,8 +10,20 @@ $imageFiles = array_filter($files, function ($file) {
     return pathinfo($file, PATHINFO_EXTENSION) === 'jpg';
 });
 
-// Преобразуйте список файлов в массив JSON и отправьте его
-header('Content-Type: application/json');
 
-echo json_encode(array_values($imageFiles));
+$imageData = [];
+
+foreach ($imageFiles as $image) {
+    $imagePath = $imageDir . $image;
+    $hash = md5_file($imagePath); // Генерируем хеш изображения
+    $imageData[] = [
+        "src" => $imagePath,
+        "hash" => $hash,
+        "alt" => "Image description",
+    ];
+}
+
+
+header('Content-Type: application/json');
+echo json_encode($imageData);
 ?>
