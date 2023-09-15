@@ -22,8 +22,9 @@
             style="--bs-bg-opacity: 1;"
             ref="modal">
             <div id="info"
-                class="info d-flex justify-content-center align-items-center position-fixed top-0 start-0 end-0"
-                v-show="showInfo">
+                class="info z-1 d-flex justify-content-center align-items-center position-fixed top-0 start-0 end-0"
+                v-show="showInfo"
+                :class="{ 'd-none': !showInfo }">
                 <div
                     class="left d-flex justify-content-start align-items-start position-fixed top-0 start-0 ml-2">
                     <button
@@ -49,11 +50,12 @@
             </div>
 
             <!-- Изображение в модальном окне -->
-            <div class="zoom-container">
+            <div class="container">
                 <img
                     class="modal-content w-auto m-auto display-block mw-90 mh-90 img-fluid"
                     id="modalImage" role="button"
                     :src="modalImageUrl"
+                    style="cursor: zoom-in;"
                     v-if="modalImageUrl"
                     @dblclick="toggleZoom"
                     key="modalImageKey"
@@ -79,7 +81,7 @@
             </div>
 
             <!-- Миниатюры -->
-            <div class="thumbnails fixed-bottom  d-flex justify-content-center align-items-end"
+            <div class="thumbnails  fixed-bottom  d-flex justify-content-center align-items-end"
                 :class="{ 'd-none': !showThumbnails }">
                 <div
                     class="thumbnails-inner d-flex justify-content-center align-items-end mw-100">
@@ -90,7 +92,7 @@
                         @click="openModal(image.index)"
                         :class="{ 'active': image.index === currentIndex }">
                         <button><img :src="image.src" :alt="image.alt"
-                                :data-index="image.index" class="img-fluid" loading="lazy" data-src></button>
+                                :data-index="image.index" class="rounded " loading="lazy" data-src></button>
                     </div>
                 </div>
             </div>

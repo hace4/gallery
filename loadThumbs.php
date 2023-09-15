@@ -1,16 +1,29 @@
 <?php
-// Укажите путь к директории с миниатюрами
-$thumbDir = 'thumbs/';
+// Укажите путь к директории с изображениями
+$imageDir = 'thumbs\\';
 
 // Получите список файлов в директории
-$files = scandir($thumbDir);
+$files = scandir($imageDir);
 
 // Отфильтруйте только файлы с расширением .jpg
-$thumbFiles = array_filter($files, function ($file) {
+$imageFiles = array_filter($files, function ($file) {
     return pathinfo($file, PATHINFO_EXTENSION) === 'jpg';
 });
 
-// Преобразуйте список файлов в массив JSON и отправьте его
+
+$imageData = [];
+
+foreach ($imageFiles as $image) {
+    $imagePath = $imageDir . $image;
+    $hash = md5_file($imagePath); // Генерируем хеш изображения
+    $imageData[] = [
+        "src" => $imagePath,
+        "hash" => $hash,
+        "alt" => "Image description",
+    ];
+}
+
+
 header('Content-Type: application/json');
-echo json_encode(array_values($thumbFiles));
+echo json_encode($imageData);
 ?>

@@ -54,14 +54,6 @@
     scale: 0.98;
 }
 
-
-.mid .form-control:focus {
-    outline: none;
-    box-shadow: none;
-}
-
-
-
 .slide-fade-enter-active, .slide-fade-leave-active {
     transition: transform 0.5s;
 }
@@ -69,15 +61,6 @@
     transform: translateX(100%);
 }
 
-
-.zoomed-1 {
-    transform: scale(2); /* Увеличьте масштаб для первого зума */
-  }
-  
-.zoomed-2 {
-    transform: scale(4); /* Увеличьте масштаб для второго зума */
-  }
-  
 @media (max-width: 800px) {
     
     .prev,

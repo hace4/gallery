@@ -1,5 +1,4 @@
-const imageDir = "../images/";
-const thumbsDir = "../thumbs/";
+
 document.addEventListener("DOMContentLoaded", function () {
 const app = new Vue({
     el: "#app",
@@ -11,6 +10,7 @@ const app = new Vue({
         showThumbnails: true,
         showInfo: true,
         showNavigation: true,
+        isToggleThumbnailsActive: false,
         currentIndex: 0,
         modalImageUrl: null,
         thumbnailsPerPage: 3,
@@ -25,6 +25,8 @@ const app = new Vue({
         Thumbs: [],
         currentTranslateX: 0,
         currentTranslateY: 0,
+        minZoomLevel: 0, // Минимальное значение zoomLevel
+        maxZoomLevel: 1,  // Максимальное значение zoomLevel
     },
 
     computed: {
@@ -79,23 +81,65 @@ const app = new Vue({
             if (!this.isDragging) return;
             this.isDragging = false;
             document.body.classList.remove('img-grabbing');
-            modalImage.style.cursor = 'grab';
+            modalImage.style.cursor = 'zoom-in';
         },
+        // Обработчик события прокрутки колеса мыши
+        handleMouseWheel(event) {
+        // Добавьте эти переменные в раздел data вашего объекта Vue
+
+            if (event.ctrlKey) {
+                event.preventDefault();
+                if (event.deltaY < 0) {
+                    // Уменьшение масштаба при прокрутке вниз (увеличение zoomLevel)
+                    if (this.zoomLevel <= this.maxZoomLevel) {
+                        this.zoomLevel++;
+                    }
+                } else if (event.deltaY > 0) {
+                    // Увеличение масштаба при прокрутке вверх (уменьшение zoomLevel)
+                    if (this.zoomLevel > this.minZoomLevel) {
+                        this.zoomLevel--;
+                    }else{
+                        this.currentTranslateX = 0;
+                        this.currentTranslateY = 0;
+                        this.deltaX = 0;
+                        this.deltaY = 0;
+                        this.currentTranslateY = 0;
+                    }
+                }
+
+                // Обновите значение zoomScale в зависимости от zoomLevel
+                this.zoomScale = Math.pow(2, this.zoomLevel);
+                console.log(this.zoomLevel);
+                // Обновите стиль изображения
+                const modalImage = document.getElementById("modalImage");
+                modalImage.style.transform = `translate(${this.currentTranslateX}px, ${this.currentTranslateY}px) scale(${this.zoomScale})`;
+            };
+
+        },
+
         resetUserActivityTimer() {
             clearTimeout(this.userActivityTimeout);
             this.userActivityTimeout = setTimeout(this.hideControlsAndThumbnails, this.userActivityDuration);
         },
         hideControlsAndThumbnails() {
+        // Проверяем флаг и состояние миниатюр
+        if (!this.isToggleThumbnailsActive) {
             this.showThumbnails = false;
+        }
             this.showInfo = false;
             this.showNavigation = false;
         },
         handleUserActivity() {
+                    // Проверяем флаг и состояние миниатюр
+        if (!this.isToggleThumbnailsActive) {
             this.showThumbnails = true;
+        }
             this.showInfo = true;
             this.showNavigation = true;
             this.resetUserActivityTimer();
-        },
+        }, 
+        // Обработчик события прокрутки колеса мыши
+
         updateThumbnails() {
             const currentPageStart = this.currentPage * this.thumbnailsPerPage;
             const currentPageEnd = currentPageStart + this.thumbnailsPerPage;
@@ -131,6 +175,7 @@ const app = new Vue({
             if (this.currentIndex + 1 > this.thumbnailsPerPage * (this.currentPage + 1)) {
                 this.nextThumbnails();
             }
+            this.zoomLevel = 0;
             setTimeout(() => {
                 this.modalImageUrl = this.images[this.currentIndex].src;
             }, 10);
@@ -144,6 +189,7 @@ const app = new Vue({
             if (this.currentIndex + 1 > this.thumbnailsPerPage * (this.currentPage + 1)) {
                 this.nextThumbnails();
             }
+            this.zoomLevel = 0;
             setTimeout(() => {
                 this.modalImageUrl = this.images[this.currentIndex].src;
             }, 10);
@@ -163,14 +209,16 @@ const app = new Vue({
         },
         toggleThumbnails() {
             this.showThumbnails = !this.showThumbnails;
+            this.isToggleThumbnailsActive = !this.isToggleThumbnailsActive;
         },
+        
         toggleZoom() {
             const modalImage = document.getElementById("modalImage");
+            
             if (this.zoomLevel === 0) {
                 this.zoomLevel = 1;
                 this.zoomScale = 2;
                 modalImage.style.transform = `scale(${this.zoomScale})`;
-                modalImage.style.cursor = 'grab';
             } else if (this.zoomLevel === 1) {
                 this.zoomLevel = 2;
                 this.zoomScale = 4;
@@ -184,7 +232,6 @@ const app = new Vue({
                 this.deltaX = 0;
                 this.deltaY = 0;
                 this.currentTranslateY = 0;
-                modalImage.style.cursor = 'zoom-in';
             }
         },
         lazyLoadImage() {
@@ -209,6 +256,18 @@ const app = new Vue({
                 hash: image.hash,
                 loaded: false,
             }));
+        })
+        .catch((error) => {
+            console.error("Ошибка при загрузке изображений:", error);
+        });
+        fetch("loadThumbs.php")
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            return response.json();
+        })
+        .then((data) => {
             this.Thumbs = data.map((image) => ({
                 src: image.src,
                 alt: image.alt,
@@ -228,6 +287,7 @@ const app = new Vue({
         document.addEventListener('touchstart', this.startDrag, { passive: false });
         document.addEventListener('touchmove', this.drag, { passive: false });
         document.addEventListener('touchend', this.endDrag);
+        document.addEventListener('wheel', this.handleMouseWheel, { passive: false });
         this.resetUserActivityTimer();
     },
     destroyed() {
