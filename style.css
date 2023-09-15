@@ -60,6 +60,12 @@
 .slide-fade-enter, .slide-fade-leave-to {
     transform: translateX(100%);
 }
+.modal-fade-enter-active, .modal-fade-leave-active {
+    transition: opacity 0.3s ease-in-out 1ms;
+}
+.modal-fade-enter, .modal-fade-leave-to {
+    opacity: 0;
+}
 
 @media (max-width: 800px) {
     
@@ -67,11 +73,4 @@
     .next {
         display: none;
     }
-}
-@media (max-height:900px) {
-.thumbnails{
-    margin-bottom: 0;
-    background-color: rgba(38, 38, 38, 0.415);
-
-}
 }

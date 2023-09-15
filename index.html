@@ -17,14 +17,17 @@
         </button>
 
         <!-- Модальное окно с изображением и миниатюрами -->
+
         <div id="myModal"
-            class="modal d-none position-fixed z-1 pt-5 w-100 h-100 overflow-auto overflow-x-hidden bg-dark start-0 top-0"
-            style="--bs-bg-opacity: 1;"
+            class="modal  position-fixed z-1 pt-5 w-100 h-100 overflow-auto overflow-x-hidden bg-dark start-0 top-0"
+            v-show="showModal"
+            :class="{ 'd-block' : showModal }"
             ref="modal">
-            <div id="info"
-                class="info z-1 d-flex justify-content-center align-items-center position-fixed top-0 start-0 end-0"
+            <transition name="modal-fade" mode="out-in">
+            <div id="info" 
+                class="info z-1 bg-dark bg-opacity-50 d-flex justify-content-center align-items-center position-fixed top-0 start-0 end-0"
                 v-show="showInfo"
-                :class="{ 'd-none': !showInfo }">
+                :style="{ 'opacity': showInfo }">
                 <div
                     class="left d-flex justify-content-start align-items-start position-fixed top-0 start-0 ml-2">
                     <button
@@ -48,10 +51,12 @@
                     </div>
                 </div>
             </div>
+            </transition>
 
             <!-- Изображение в модальном окне -->
             <div class="container">
-                <img
+                <transition name="slide-fade" mode="out-in">
+                    <img
                     class="modal-content w-auto m-auto display-block mw-90 mh-90 img-fluid"
                     id="modalImage" role="button"
                     :src="modalImageUrl"
@@ -61,28 +66,37 @@
                     key="modalImageKey"
                     loading="lazy"
                     data-src>
+                </transition>
+
             </div>
 
             <!-- Кнопки для переключения изображений -->
-            <div id="navigation" class="navigation"
-                :class="{ 'd-none': !showNavigation }">
-                <span class="prev z-1 position-absolute top-50 text-light"
-                    style="left: 10px;"
-                    role="button" @click="prevImage">
-                    <i class="bi bi-caret-left-fill"
-                        style="font-size: 1.5rem;"></i>
-                </span>
-                <span class="next z-1 position-absolute top-50 text-light"
-                    style="right: 10px;"
-                    role="button" @click="nextImage">
-                    <i class="bi bi-caret-right-fill"
-                        style="font-size: 1.5rem;"></i>
-                </span>
-            </div>
+            <transition name="modal-fade" mode="out-in">
+                <div id="navigation" class="navigation"
+                    v-show="showNavigation"
+                    :style = "{'opacity' : showNavigation}">
+                    <span class="prev z-1 position-absolute top-50 text-light"
+                        style="left: 10px;"
+                        role="button" @click="prevImage">
+                        <i class="bi bi-caret-left-fill"
+                            style="font-size: 1.5rem;"></i>
+                    </span>
+                    <span class="next z-1 position-absolute top-50 text-light"
+                        style="right: 10px;"
+                        role="button" @click="nextImage">
+                        <i class="bi bi-caret-right-fill"
+                            style="font-size: 1.5rem;"></i>
+                    </span>
+                </div>
+            </transition>
 
             <!-- Миниатюры -->
-            <div class="thumbnails  fixed-bottom  d-flex justify-content-center align-items-end"
-                :class="{ 'd-none': !showThumbnails }">
+            <transition name="modal-fade" mode="out-in">
+            <div class="thumbnails  bg-dark bg-opacity-50 fixed-bottom  d-flex justify-content-center align-items-end"
+                v-show="showThumbnails"
+                :style = "{'opacity' : showThumbnails}"
+                >
+                
                 <div
                     class="thumbnails-inner d-flex justify-content-center align-items-end mw-100">
                     <div class="thumbnail"
@@ -96,6 +110,7 @@
                     </div>
                 </div>
             </div>
+            </transition>
         </div>
 
         <script src="vue.min.js"></script>

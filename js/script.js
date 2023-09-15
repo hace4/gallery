@@ -7,9 +7,10 @@ const app = new Vue({
         userActivityDuration: 5000,
         zoomLevel: 0,
         zoomScale: 1,
-        showThumbnails: true,
-        showInfo: true,
-        showNavigation: true,
+        showThumbnails: 1,
+        showInfo: 1,
+        showNavigation: 1,
+        showModal: false,
         isToggleThumbnailsActive: false,
         currentIndex: 0,
         modalImageUrl: null,
@@ -93,26 +94,28 @@ const app = new Vue({
                     // Уменьшение масштаба при прокрутке вниз (увеличение zoomLevel)
                     if (this.zoomLevel <= this.maxZoomLevel) {
                         this.zoomLevel++;
+                        this.currentTranslateX = 0;
+                        this.currentTranslateY = 0;
+                        this.deltaX = 0;
+                        this.deltaY = 0;
                     }
                 } else if (event.deltaY > 0) {
                     // Увеличение масштаба при прокрутке вверх (уменьшение zoomLevel)
                     if (this.zoomLevel > this.minZoomLevel) {
                         this.zoomLevel--;
-                    }else{
-                        this.currentTranslateX = 0;
-                        this.currentTranslateY = 0;
-                        this.deltaX = 0;
-                        this.deltaY = 0;
-                        this.currentTranslateY = 0;
+                            this.currentTranslateX = 0;
+                                this.currentTranslateY = 0;
+                                this.deltaX = 0;
+                                this.deltaY = 0;
                     }
                 }
 
                 // Обновите значение zoomScale в зависимости от zoomLevel
                 this.zoomScale = Math.pow(2, this.zoomLevel);
-                console.log(this.zoomLevel);
+
                 // Обновите стиль изображения
                 const modalImage = document.getElementById("modalImage");
-                modalImage.style.transform = `translate(${this.currentTranslateX}px, ${this.currentTranslateY}px) scale(${this.zoomScale})`;
+                modalImage.style.transform = `scale(${this.zoomScale})`;
             };
 
         },
@@ -124,18 +127,18 @@ const app = new Vue({
         hideControlsAndThumbnails() {
         // Проверяем флаг и состояние миниатюр
         if (!this.isToggleThumbnailsActive) {
-            this.showThumbnails = false;
+            this.showThumbnails = 0;
         }
-            this.showInfo = false;
-            this.showNavigation = false;
+            this.showInfo = 0;
+            this.showNavigation = 0;
         },
         handleUserActivity() {
                     // Проверяем флаг и состояние миниатюр
         if (!this.isToggleThumbnailsActive) {
-            this.showThumbnails = true;
+            this.showThumbnails = 1;
         }
-            this.showInfo = true;
-            this.showNavigation = true;
+            this.showInfo = 1;
+            this.showNavigation = 1;
             this.resetUserActivityTimer();
         }, 
         // Обработчик события прокрутки колеса мыши
@@ -157,13 +160,11 @@ const app = new Vue({
             this.currentIndex = index;
             this.modalImageUrl = this.images[index].src;
             this.currentPage = Math.floor(index / this.thumbnailsPerPage);
-            document.getElementById("myModal").classList.remove("d-none");
-            document.getElementById("myModal").classList.add("d-block");
+            this.showModal = true;
             document.querySelector(".info").classList.add("active"); 
         },
         closeModal() {
-            document.getElementById("myModal").classList.remove("d-block");
-            document.getElementById("myModal").classList.add("d-none");
+            this.showModal = false;
             document.querySelector(".info").classList.remove("active");
         },
         prevImage() {
@@ -208,8 +209,19 @@ const app = new Vue({
             }
         },
         toggleThumbnails() {
-            this.showThumbnails = !this.showThumbnails;
+            switch (this.showThumbnails) {
+                case 0:
+                    this.showThumbnails = 1;
+                    this.resetUserActivityTimer();
+                    break;
+            
+                case 1:
+                    this.showThumbnails = 0;
+                    this.resetUserActivityTimer();
+                    break;
+            }
             this.isToggleThumbnailsActive = !this.isToggleThumbnailsActive;
+
         },
         
         toggleZoom() {
