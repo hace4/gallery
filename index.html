@@ -1,121 +1,56 @@
 <!DOCTYPE html>
 <html lang="en" data-bs-theme="dark">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="bootstrap-5.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
-    <title>Vanilla JavaScript Gallery with Thumbnails</title>
+    <title>Gallery</title>
 </head>
+
 <body>
-    <div id="app">
-        <!-- Кнопка для открытия галереи -->
-        <button class="btn btn-warning open-gallery-button"
-            @click="openModal(currentIndex)">
-            <i class="bi bi-images me-3 p-0"></i>Открыть галерею
-        </button>
-
-        <!-- Модальное окно с изображением и миниатюрами -->
-
-        <div id="myModal"
-            class="modal  position-fixed z-1 pt-5 w-100 h-100 overflow-auto overflow-x-hidden bg-dark start-0 top-0"
-            v-show="showModal"
-            :class="{ 'd-block' : showModal }"
-            ref="modal">
-            <transition name="modal-fade" mode="out-in">
-            <div id="info" 
-                class="info z-1 bg-dark bg-opacity-50 d-flex justify-content-center align-items-center position-fixed top-0 start-0 end-0"
-                v-show="showInfo"
-                :style="{ 'opacity': showInfo }">
-                <div
-                    class="left d-flex justify-content-start align-items-start position-fixed top-0 start-0 ml-2">
-                    <button
-                        class="btn text-warning toggle-thumbnails-button"
-                        @click="toggleThumbnails" alt="скрыть миниатюры">
-                        <i class="bi bi-grid-3x3-gap-fill"
-                            style="font-size: 1.5rem;"></i>
-                    </button>
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1>Галерея</h1>
+                <button id="openGalleryBtn" class="btn btn-primary" data-bs-toggle="modal"
+                    data-bs-target="#galleryModal">Открыть галерею</button>
+            </div>
+        </div>
+    </div>
+    <!-- Модальное окно для галереи -->
+    <div class="modal fade overflow-y-hidden" id="galleryModal" tabindex="-1" aria-labelledby="galleryModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-fullscreen">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="galleryModalLabel">Галерея</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
                 </div>
-                <div
-                    class="right d-flex justify-content-end align-items-end position-fixed top-0 end-0 ml-2">
-                    <button class="btn text-warning close"
-                        @click="closeModal">
-                        <i class="bi bi-x-square" style="font-size: 1.7rem;"></i>
-                    </button>
-                </div>
-                <div class="mid w-auto mt-1">
-                    <div class="d-flex ">
-                        <p class="text-light">{{ currentIndex + 1 }} / {{
-                            images.length }}</p>
+                <div class="modal-body d-flex justify-content-center align-items-center">
+                    <div class="gallery">
+                        <div class="carousel-control-prev">
+                            <button class="carousel-control-prev prev-btn"><span class="carousel-control-prev-icon"
+                                    aria-hidden="true"></span>
+                                <span class="visually-hidden">Предыдущий</span></button>
+                        </div>
+                        <div class="carousel-control-next">
+                            <button class="carousel-control-next next-btn"> <span class="carousel-control-next-icon"
+                                    aria-hidden="true"></span>
+                                <span class="visually-hidden">Следующий</span></button>
+                        </div>
                     </div>
                 </div>
             </div>
-            </transition>
-
-            <!-- Изображение в модальном окне -->
-            <div class="container">
-                <transition name="slide-fade" mode="out-in">
-                    <img
-                    class="modal-content w-auto m-auto display-block mw-90 mh-90 img-fluid"
-                    id="modalImage" role="button"
-                    :src="modalImageUrl"
-                    style="cursor: zoom-in;"
-                    v-if="modalImageUrl"
-                    @dblclick="toggleZoom"
-                    key="modalImageKey"
-                    loading="lazy"
-                    data-src>
-                </transition>
-
-            </div>
-
-            <!-- Кнопки для переключения изображений -->
-            <transition name="modal-fade" mode="out-in">
-                <div id="navigation" class="navigation"
-                    v-show="showNavigation"
-                    :style = "{'opacity' : showNavigation}">
-                    <span class="prev z-1 position-absolute top-50 text-light"
-                        style="left: 10px;"
-                        role="button" @click="prevImage">
-                        <i class="bi bi-caret-left-fill"
-                            style="font-size: 1.5rem;"></i>
-                    </span>
-                    <span class="next z-1 position-absolute top-50 text-light"
-                        style="right: 10px;"
-                        role="button" @click="nextImage">
-                        <i class="bi bi-caret-right-fill"
-                            style="font-size: 1.5rem;"></i>
-                    </span>
-                </div>
-            </transition>
-
-            <!-- Миниатюры -->
-            <transition name="modal-fade" mode="out-in">
-            <div class="thumbnails  bg-dark bg-opacity-50 fixed-bottom  d-flex justify-content-center align-items-end"
-                v-show="showThumbnails"
-                :style = "{'opacity' : showThumbnails}"
-                >
-                
-                <div
-                    class="thumbnails-inner d-flex justify-content-center align-items-end mw-100">
-                    <div class="thumbnail"
-                        role="button"
-                        v-for="(image, index) in visibleThumbnails"
-                        :key="image.index"
-                        @click="openModal(image.index)"
-                        :class="{ 'active': image.index === currentIndex }">
-                        <button><img :src="image.src" :alt="image.alt"
-                                :data-index="image.index" class="rounded " loading="lazy" data-src></button>
-                    </div>
-                </div>
-            </div>
-            </transition>
         </div>
 
-        <script src="vue.min.js"></script>
-        <script src="bootstrap-5.3.1/js/bootstrap.bundle.min.js"></script>
-        <script src="js/script.js"></script>
     </div>
+    </div>
+
+
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.min.js"></script>
+    <script src="js/vanila.js"></script>
 </body>
+
 </html>

@@ -1,76 +1,40 @@
+.gallery-slide img{
+
+    height: 80vh;
+}
+.modal-fullscreen .modal-body {
+    overflow-y: hidden;
+}
 
 .thumbnail {
     width: 80px;
     height: 100px;
-    flex: 1 0 0;
-    margin-right: 5px;
-    transition: all .33s ease;
-}
-.thumbnail button{
-    appearance: none;
-    width: 100%;
-    height: 100%;
-    margin: 0;
-    padding: 0;
-    border: 0;
-    position: relative;
-    background: transparent;
-    cursor: pointer;
-    pointer-events: auto;
-    touch-action: manipulation;
-    transition: opacity .2s ease;
-    background-image: none;
+    margin-right: 10px;
+    margin-left: 10px;
+    transition: all .33s ease;  
 }
 
+
 .thumbnail.active {
-    flex: 1 0 80px;
-    margin:0 10px;
+    scale: 1.05;
 }
 
 .thumbnail img {
-    top: 0;
-    right: 0;
-    bottom: 0;
-    left: 0;
     width: 100%;
     height: 100%;
     box-sizing: border-box;
     pointer-events: none;
-    object-fit: cover;
-    height: 100px;
     transition: all .33s ease;
 }
 
-.thumbnail.active img {
-    box-shadow: 0 0 20px rgba(255, 255, 255, 0.687);
+
+
+
+.gallery .gallery-slides.active {
+    transform: translateX(0); /* Применяем анимацию только для активного слайда */
 }
 
-
-
-
-
-.prev:hover,
-.next:hover {
-    scale: 0.98;
-}
-
-.slide-fade-enter-active, .slide-fade-leave-active {
-    transition: transform 0.5s;
-}
-.slide-fade-enter, .slide-fade-leave-to {
-    transform: translateX(100%);
-}
-.modal-fade-enter-active, .modal-fade-leave-active {
-    transition: opacity 0.3s ease-in-out 1ms;
-}
-.modal-fade-enter, .modal-fade-leave-to {
-    opacity: 0;
-}
-
-@media (max-width: 800px) {
-    
-    .prev,
-    .next {
-        display: none;
-    }
+.thumbnail.active {
+    transform: scale(1.2); /* Масштабирование активной миниатюры */
+    transition:  transform 0.2s ease-in-out; /* Добавляем анимацию на смену активной миниатюры */
 }
