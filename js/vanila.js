@@ -1,3 +1,18 @@
+/* hotkey: 
+{
+    ctrl+alt+d => spear page;
+    space=> last || first page;
+    shift + h => hide || show thumb; arrowRight => nextPage;
+    arrowLeft => prevPage;
+    esc => close Full text viewer 
+} 
+cfg:
+{
+    zoomScales => array with all acceptable scales;
+    thumbnailNavigationLimit => Maximum allowed number of displayed thumbnails;
+    showThumbnailsFlag => the value for regulation should be shown when opening a thumbnail or not;
+}
+*/
 class Gallery {
     constructor(containerSelector, images) {
         this.container = document.querySelector(containerSelector);
@@ -17,12 +32,12 @@ class Gallery {
         this.currentTranslateX = 0;
         this.currentTranslateY = 0;
         this.minZoomLevel = 0;
-        this.showThumbnailsFlag = 1;
+        this.showThumbnailsFlag = true;
         this.maxZoomLevel = this.zoomScales.length - 1;
-        this.leftHalf = document.getElementById("leftHalf");
-        this.rightHalf = document.getElementById("rightHalf");
         this.imageContainer = null;
-        this.spread = true;
+        this.spread = false;
+        this.lastPage = this.images.length - 1;
+        this.isLastPage = false;
 
         if (this.container) {
             this.init();
@@ -59,13 +74,13 @@ class Gallery {
     }
     spreadToogle(){
         switch (this.spread) {
-            case true:
-                this.spread = false;
+            case false:
+                this.spread = !this.spread;
                 this.showPageSpread();
                 break;
         
             default:
-                this.spread = true;
+                this.spread = !this.spread;
                 this.hidePageSpread();
                 break;
         }
@@ -73,13 +88,13 @@ class Gallery {
 
     createSlides() {
         const slidesContainer = document.createElement("div");
-        slidesContainer.classList.add("gallery-slides", "d-flex");
+        slidesContainer.classList.add("gallery-slides", "d-flex","bg-white");
 
         this.images.forEach((image) => {
             const slide = document.createElement("div");
             slide.classList.add("gallery-slide");
             const img = document.createElement("img");
-            img.classList.add("d-inline-block", "align-middle");
+            img.classList.add("d-inline-block", "align-middle", "img-fluid");
             img.src = "";
             img.alt = image.alt;
             img.dataset.src = image.src;
@@ -97,13 +112,13 @@ class Gallery {
             "gallery-thumbnails",
             "d-flex",
             "justify-content-center",
-            "align-items-center",
             "overflow-auto",
             "flex-nowrap",
             "mt-2",
             "overflow-y-hidden",
             "bg-dark",
-            "bg-opacity-50"
+            "bg-opacity-50",
+            "fixed-bottom",
         );
 
         const thumbnailsInner = document.createElement("div");
@@ -112,7 +127,7 @@ class Gallery {
             "d-flex",
             "justify-content-center",
             "align-items-end",
-            "mw-100"
+            "mw-100",
         );
 
         this.Thumbs.forEach((image, index) => {
@@ -122,7 +137,7 @@ class Gallery {
             img.classList.add("rounded");
             img.src = "";
             img.alt = image.alt;
-            thumbnail.classList.add("thumbnail");
+            thumbnail.classList.add("thumbnail", "mt-1");
             img.src = "";
             img.dataset.src = image.src;
             thumbnail.dataset.index = index;
@@ -194,6 +209,22 @@ class Gallery {
                     this.nextSlide();
                     this.updateCurrentPage();
                 } 
+            });
+            document.addEventListener("keydown", (event) => {
+                if (event.ctrlKey && event.altKey && event.keyCode === 68) {
+                    this.spreadToogle();
+                    this.updateCurrentPage();
+                }
+            });
+            document.addEventListener("keydown", (event) => {
+                if ( event.key === " ") {
+                    this.toggleLastFirstPage();
+                }
+            });
+            document.addEventListener("keydown", (event) => {
+                if( event.shiftKey && event.keyCode === 72){
+                    this.toggleThumbnails();
+                }
             });
 
             thumbnails.forEach((thumbnail, index) => {
@@ -329,14 +360,28 @@ class Gallery {
 
     toggleThumbnails() {
         switch (this.showThumbnailsFlag) {
-            case 0:
-                this.showThumbnailsFlag = 1;
+            case false:
+                this.showThumbnailsFlag = !this.showThumbnailsFlag;
                 this.showThumb();
                 break;
 
-            case 1:
-                this.showThumbnailsFlag = 0;
+            case true:
+                this.showThumbnailsFlag = !this.showThumbnailsFlag;
                 this.hideThumb();
+                break;
+        }
+        this.isToggleThumbnailsActive = !this.isToggleThumbnailsActive;
+    }
+    toggleLastFirstPage() {
+        switch (this.isLastPage) {
+            case true:
+                this.showSlide(0);
+                this.isLastPage = !this.isLastPage;
+                break;
+
+            case false:
+                this.isLastPage = !this.isLastPage;
+                this.showSlide(this.lastPage);
                 break;
         }
         this.isToggleThumbnailsActive = !this.isToggleThumbnailsActive;

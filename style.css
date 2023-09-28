@@ -1,9 +1,6 @@
-.gallery-slide img{
 
-    height: 80vh;
-}
 .modal-fullscreen .modal-body {
-    overflow-y: hidden;
+    overflow-y: auto;
 }
 
 .thumbnail {
