@@ -27,7 +27,13 @@
     transition: all .33s ease;
 }
 
+.gallery-slide img {
+    cursor: zoom-in;
+}
 
+.img-grabbing {
+    cursor: grabbing !important;
+}
 
 
 .gallery .gallery-slides.active {
